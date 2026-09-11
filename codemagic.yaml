@@ -7,7 +7,7 @@ workflows:
       groups:
         - ios_credentials
       vars:
-        BUNDLE_ID: "com.oxyvra.app" # <--- Substitua pelo Bundle ID exato do seu app
+        BUNDLE_ID: "app.lovable.oxyvra"
     scripts:
       - name: Install dependencies
         script: npm install
