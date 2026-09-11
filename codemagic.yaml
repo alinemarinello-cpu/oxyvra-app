@@ -4,8 +4,6 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
-      vars:
-        BUNDLE_ID: "com.oxyvra.app"
     scripts:
       - name: Install dependencies
         script: npm install
@@ -17,6 +15,6 @@ workflows:
         script: npx cap sync ios
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --project ios/App/App.xcworkspace --scheme App
+          xcode-project build-ipa --project ios/App.xcworkspace --scheme App
     artifacts:
-      - ios/App/build/derivedData/Build/Products/Release-iphoneos/*.ipa
+      - ios/build/derivedData/Build/Products/Release-iphoneos/*.ipa
