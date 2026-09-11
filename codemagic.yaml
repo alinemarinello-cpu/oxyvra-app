@@ -6,6 +6,8 @@ workflows:
       node: latest
       groups:
         - ios_credentials
+      vars:
+        BUNDLE_ID: "app.lovable.oxyvra"
     scripts:
       - name: Install dependencies
         script: npm install
@@ -13,11 +15,11 @@ workflows:
         script: npm run build
       - name: Setup Capacitor iOS
         script: |
-          rm -rf ios
-          npx cap add ios
           npx cap sync ios
-      - name: Set up provisioning profiles
-        script: xcode-project use-profiles
+      - name: Fetch signing files
+        script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
+          xcode-project use-profiles
       - name: Build iOS Binary
         script: |
           xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App
