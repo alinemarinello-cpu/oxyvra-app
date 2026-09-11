@@ -13,6 +13,8 @@ workflows:
         script: npx cap add ios || true
       - name: Sync Capacitor iOS
         script: npx cap sync ios
+      - name: Use provisioning profiles
+        script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
           xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
