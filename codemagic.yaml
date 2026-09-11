@@ -15,8 +15,6 @@ workflows:
         script: npm run build
       - name: Setup Capacitor iOS
         script: |
-          rm -rf ios
-          npx cap add ios
           npx cap sync ios
       - name: Fetch signing files
         script: |
