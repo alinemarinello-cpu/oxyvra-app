@@ -18,9 +18,7 @@ workflows:
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          WORKSPACE=$(find . -name "*.xcworkspace" | head -n 1)
-          echo "Building workspace: $WORKSPACE"
-          xcode-project build-ipa --workspace "$WORKSPACE" --scheme App
+          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App
     artifacts:
       - ios/**/build/ios/ipa/*.ipa
       - ios/**/*.ipa
