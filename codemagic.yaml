@@ -10,11 +10,10 @@ workflows:
         script: npm install
       - name: Build web assets
         script: npm run build
-      - name: Setup Capacitor iOS and Pods
+      - name: Clean and setup Capacitor iOS
         script: |
-          if [ ! -d "ios/App" ]; then
-            npx cap add ios
-          fi
+          rm -rf ios
+          npx cap add ios
           npx cap sync ios
           cd ios/App
           pod install
