@@ -17,6 +17,9 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Install pods
+        script: |
+          cd ios/App && pod install
       - name: Use provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
