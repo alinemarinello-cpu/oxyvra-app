@@ -4,6 +4,8 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
+      groups:
+        - ios_credentials
     scripts:
       - name: Install dependencies
         script: npm install
