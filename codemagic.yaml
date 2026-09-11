@@ -15,6 +15,6 @@ workflows:
         script: npx cap sync ios
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --project ios/App.xcworkspace --scheme App
+          xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
     artifacts:
-      - ios/build/derivedData/Build/Products/Release-iphoneos/*.ipa
+      - ios/App/build/derivedData/Build/Products/Release-iphoneos/*.ipa
