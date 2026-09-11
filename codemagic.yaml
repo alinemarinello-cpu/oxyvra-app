@@ -9,9 +9,12 @@ workflows:
         script: npm install
       - name: Build web assets
         script: npm run build
-      - name: Add iOS platform
+      - name: Add ios platform
         script: npx cap add ios || true
       - name: Sync Capacitor iOS
         script: npx cap sync ios
+      - name: Build iOS Binary
+        script: |
+          xcode-project build-ipa --project ios/App/App.xcworkspace --scheme App
     artifacts:
-      - build/**/*.ipa
+      - ios/App/build/derivedData/Build/Products/Release-iphoneos/*.ipa
