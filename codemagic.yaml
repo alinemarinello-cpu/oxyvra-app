@@ -19,8 +19,8 @@ workflows:
       - name: Build iOS Binary
         script: |
           xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcpretty || {
-            echo "=== ERRO DETECTADO: EXIBINDO LOGS DO XCODEBUILD ==="
-            cat /tmp/xcodebuild_logs/*.log || true
+            echo "=== EXIBINDO ÚLTIMAS 200 LINHAS DO LOG DO XCODE ==="
+            tail -n 200 /tmp/xcodebuild_logs/*.log || true
             exit 1
           }
     artifacts:
