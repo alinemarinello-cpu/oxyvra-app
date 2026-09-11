@@ -17,6 +17,6 @@ workflows:
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --workspace ios/App/App.xcworkspace --scheme App
+          xcode-project build-ipa --scheme App
     artifacts:
       - ios/App/build/derivedData/Build/Products/Release-iphoneos/*.ipa
