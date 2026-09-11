@@ -18,7 +18,7 @@ workflows:
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App
+          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcpretty
     artifacts:
       - ios/**/build/ios/ipa/*.ipa
       - ios/**/*.ipa
