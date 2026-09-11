@@ -13,17 +13,21 @@ workflows:
       - name: Setup Capacitor iOS and Install Pods
         script: |
           rm -rf ios
+          npm install @capacitor/ios --save || true
           npx cap add ios
           npx cap sync ios
+          
+          # Localizar o Podfile dinamicamente
           PODFILE_PATH=$(find . -name "Podfile" | head -n 1)
-          if [ -n "$PODFILE_PATH" ]; then
-            POD_DIR=$(dirname "$PODFILE_PATH")
-            echo "Found Podfile in $POD_DIR"
-            cd "$POD_DIR" && pod install
-          else
-            echo "Error: Podfile not found!"
+          if [ -z "$PODFILE_PATH" ]; then
+            echo "=== DEBUG: Podfile não encontrado. Listando estrutura da pasta ios ==="
+            find ios -maxdepth 3 || true
             exit 1
           fi
+          
+          POD_DIR=$(dirname "$PODFILE_PATH")
+          echo "Podfile encontrado em: $POD_DIR"
+          cd "$POD_DIR" && pod install
       - name: Use provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
