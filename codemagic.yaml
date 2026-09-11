@@ -18,7 +18,11 @@ workflows:
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcpretty
+          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcpretty || {
+            echo "=== ERRO DETECTADO: EXIBINDO LOGS DO XCODEBUILD ==="
+            cat /tmp/xcodebuild_logs/*.log || true
+            exit 1
+          }
     artifacts:
       - ios/**/build/ios/ipa/*.ipa
       - ios/**/*.ipa
