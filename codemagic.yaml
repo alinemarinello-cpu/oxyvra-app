@@ -15,13 +15,20 @@ workflows:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-          cd ios/App
-          pod install
+          PODFILE_PATH=$(find . -name "Podfile" | head -n 1)
+          if [ -n "$PODFILE_PATH" ]; then
+            POD_DIR=$(dirname "$PODFILE_PATH")
+            echo "Found Podfile in $POD_DIR"
+            cd "$POD_DIR" && pod install
+          else
+            echo "Error: Podfile not found!"
+            exit 1
+          fi
       - name: Use provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          WORKSPACE=$(find ios -name "*.xcworkspace" | head -n 1)
+          WORKSPACE=$(find . -name "*.xcworkspace" | head -n 1)
           echo "Building workspace: $WORKSPACE"
           xcode-project build-ipa --workspace "$WORKSPACE" --scheme App
     artifacts:
