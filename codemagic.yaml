@@ -6,6 +6,8 @@ workflows:
       node: latest
       groups:
         - ios_credentials
+      vars:
+        BUNDLE_ID: "com.oxyvra.app" # <--- Substitua pelo Bundle ID exato do seu app
     scripts:
       - name: Install dependencies
         script: npm install
@@ -18,7 +20,7 @@ workflows:
           npx cap sync ios
       - name: Fetch signing files
         script: |
-          app-store-connect fetch-signing-files "$(xcode-project detect-bundle-id)" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
           xcode-project use-profiles
       - name: Build iOS Binary
         script: |
