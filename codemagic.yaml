@@ -18,7 +18,7 @@ workflows:
           npx cap sync ios
       - name: Fetch signing files
         script: |
-          app-store-connect fetch-signing-files "app.lovable.oxyvra" --type IOS_APP_STORE --create
+          app-store-connect fetch-signing-files "$(xcode-project detect-bundle-id)" --type IOS_APP_STORE --create
           xcode-project use-profiles
       - name: Build iOS Binary
         script: |
