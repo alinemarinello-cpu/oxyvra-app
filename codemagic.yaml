@@ -4,9 +4,6 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
-      vars:
-        XCODE_WORKSPACE: "ios/App/App.xcworkspace"
-        XCODE_SCHEME: "App"
       cocoapods: default
     scripts:
       - name: Install dependencies
@@ -17,11 +14,23 @@ workflows:
         script: |
           npx cap add ios || true
           npx cap sync ios
+      - name: Install pods dynamically
+        script: |
+          PODFILE_DIR=$(dirname $(find ios -name "Podfile" | head -n 1))
+          if [ -d "$PODFILE_DIR" ]; then
+            cd "$PODFILE_DIR" && pod install
+          else
+            echo "Podfile not found"
+            exit 1
+          fi
       - name: Use provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --workspace "$XCODE_WORKSPACE" --scheme "$XCODE_SCHEME"
+          WORKSPACE=$(find ios -name "*.xcworkspace" | head -n 1)
+          echo "Building workspace: $WORKSPACE"
+          xcode-project build-ipa --workspace "$WORKSPACE" --scheme App
     artifacts:
-      - ios/App/build/ios/ipa/*.ipa
+      - ios/**/build/ios/ipa/*.ipa
+      - ios/**/*.ipa
       - /tmp/xcodebuild_logs/*.log
