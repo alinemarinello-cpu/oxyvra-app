@@ -4,6 +4,7 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
+      # Certifique-se de configurar suas credenciais de assinatura (App Store Connect API ou Certificados) nas variáveis de ambiente do Codemagic
     scripts:
       - name: Install dependencies
         script: npm install
@@ -14,11 +15,11 @@ workflows:
           rm -rf ios
           npx cap add ios
           npx cap sync ios
-      - name: Use provisioning profiles
+      - name: Set up provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
         script: |
-          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcpretty || {
+          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App --disable-xcclean || {
             echo "=== EXIBINDO ÚLTIMAS 200 LINHAS DO LOG DO XCODE ==="
             tail -n 200 /tmp/xcodebuild_logs/*.log || true
             exit 1
