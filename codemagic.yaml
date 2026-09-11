@@ -10,13 +10,20 @@ workflows:
         script: npm install
       - name: Build web assets
         script: npm run build
-      - name: Clean and setup Capacitor iOS
+      - name: Sync Capacitor iOS
+        script: npx cap sync ios
+      - name: Install Pods safely
         script: |
-          rm -rf ios
-          npx cap add ios
-          npx cap sync ios
-          cd ios/App
-          pod install
+          POD_DIR=$(find ios -name "Podfile" -exec dirname {} \; | head -n 1)
+          if [ -n "$POD_DIR" ]; then
+            echo "Found Podfile in $POD_DIR"
+            cd "$POD_DIR" && pod install
+          else
+            echo "Podfile not found, forcing cap add ios"
+            npx cap add ios
+            npx cap sync ios
+            cd ios/App && pod install
+          fi
       - name: Use provisioning profiles
         script: xcode-project use-profiles
       - name: Build iOS Binary
