@@ -4,6 +4,8 @@ workflows:
     instance_type: mac_mini_m1
     environment:
       node: latest
+      vars:
+        BUNDLE_ID: "com.oxyvra.app"
     scripts:
       - name: Install dependencies
         script: npm install
@@ -13,9 +15,6 @@ workflows:
         script: npx cap add ios || true
       - name: Sync Capacitor iOS
         script: npx cap sync ios
-      - name: Fetch signing files
-        script: |
-          app-store-connect fetch-signing-files com.oxyvra.app --type IOS_APP_STORE --create
       - name: Build iOS Binary
         script: |
           xcode-project build-ipa --project ios/App/App.xcworkspace --scheme App
