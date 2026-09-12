@@ -1,55 +1,40 @@
 workflows:
-  ios-capacitor:
-    name: iOS Capacitor
-    max_build_duration: 120
-    instance_type: mac_mini_m2
-    integrations:
-      app_store_connect: codemagic
+  ios-workflow:
+    name: iOS Workflow
+    instance_type: mac_mini_m1
     environment:
-      ios_signing:
-        distribution_type: app_store
-        bundle_identifier: com.seu.bundleid
+      node: latest
+      groups:
+        - ios_credentials
       vars:
-        XCODE_WORKSPACE: "App.xcworkspace"
-        XCODE_SCHEME: "App"
-        APP_STORE_APP_ID: 0000000000
-      xcode: latest
-      cocoapods: default
-      node: 20
+        BUNDLE_ID: "app.lovable.oxyvra"
     scripts:
-      - name: Install npm dependencies
+      - name: Install dependencies
+        script: npm install
+      - name: Build web assets
+        script: npm run build
+      - name: Setup Capacitor iOS
         script: |
-          npm ci || npm install
-
-      - name: Capacitor sync iOS
-        script: |
+          rm -rf ios
+          npx cap add ios
           npx cap sync ios
-
-      - name: CocoaPods
+      - name: Force Bundle ID in Xcode project
         script: |
-          cd ios/App && pod install
-
-      - name: Set up code signing on Xcode project
+          node -e '
+            const fs = require("fs");
+            const pbxprojPath = "ios/App/App.xcodeproj/project.pbxproj";
+            let content = fs.readFileSync(pbxprojPath, "utf8");
+            content = content.replace(/PRODUCT_BUNDLE_IDENTIFIER = [^;]+/g, "PRODUCT_BUNDLE_IDENTIFIER = app.lovable.oxyvra");
+            fs.writeFileSync(pbxprojPath, content, "utf8");
+            console.log("Bundle ID forced to app.lovable.oxyvra in pbxproj");
+          '
+      - name: Fetch signing files
         script: |
+          app-store-connect fetch-signing-files "$BUNDLE_ID" --type IOS_APP_STORE --create
           xcode-project use-profiles
-
-      - name: Increment build number
+      - name: Build iOS Binary
         script: |
-          cd $CM_BUILD_DIR/ios/App
-          agvtool new-version -all $BUILD_NUMBER
-
-      - name: Build IPA
-        script: |
-          cd $CM_BUILD_DIR/ios/App
-          xcode-project build-ipa \
-            --workspace "$XCODE_WORKSPACE" \
-            --scheme "$XCODE_SCHEME" \
-            --archive-flags="-destination 'generic/platform=iOS'"
+          xcode-project build-ipa --project "ios/App/App.xcodeproj" --scheme App
     artifacts:
-      - ios/App/build/ios/ipa/*.ipa
-      - /tmp/xcodebuild_logs/*.log
-    publishing:
-      app_store_connect:
-        auth: integration
-        submit_to_testflight: true
-        submit_to_app_store: false
+      - ios/**/build/ios/ipa/*.ipa
+      - ios/**/*.ipa
